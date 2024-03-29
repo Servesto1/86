@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .filetrs import PostFilter
@@ -77,3 +77,32 @@ def author_now(request):
    if not user.groups.filter(name='authors').exists():
        user.groups.add(author_group)
    return redirect('post_list')
+
+
+class CategoryListView(Posts):
+    model = Post
+    template_name = 'news/category_list.html'
+    context_object_name = 'category_news_list'
+
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category, id = self.kwargs['pk'])
+        queryset = Post.objects.filter(category=self.category).order_by('-created_at')
+        return  queryset
+
+
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_subscriber'] = self.request.user not in self.category.subscribers.all()
+        context['category'] = self.category
+        return context
+
+
+@login_required
+def subscribe(request, pk):
+    user = request.user
+    category = Category.objects.get(id=pk)
+    category.subscribers.add(user)
+
+    message = 'Вы полписались на рассылку новостей категории'
+    return  render(request, 'news/subscribe.html',{'category': category, 'message': message})

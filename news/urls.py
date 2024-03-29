@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import include
 from django.urls import path
 
-from .views import NewsList, NewsCreate, NewsDelete
+from .views import NewsList, NewsCreate, NewsDelete, CategoryListView, subscribe
 
 urlpatterns =[
     path('', NewsList.as_view(), name='post_list'),
@@ -19,4 +19,6 @@ urlpatterns =[
     path('sign/', include('sign.urls')),
     path('accounts/', include('allauth.urls')),
     path('author_now/', author_now, name='author_now'),
+    path('categories/<init:pk>', CategoryListView.as_view(), name='category_list'),
+    path('categories/<int:pk>/subscribe', subscribe, name='subscribe'),
 ]

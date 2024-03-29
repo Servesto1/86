@@ -47,13 +47,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'news',
+    'news.apps.NewsConfig',
     'accounts',
     'django_filters',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'django_apscheduler',
 ]
 
 MIDDLEWARE = [
@@ -152,5 +153,24 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/news'
+ACCOUNT_LOGOUT_REDIRECT_URL ='/accounts/login/'
+
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATIONS = 'mandatory'
+
+ACCOUNT_FORMS = {'signup': 'news.forms.BasicSignupForm'}
+
+EMAIL_HOST ='lego4213@yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+
 
 SITE_ID = 1
+
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+APSCHEDULER_RUN_NOW_TIMEOUT = 25
